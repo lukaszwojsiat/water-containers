@@ -4,14 +4,12 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 public class OperationEvent {
-    public enum OperationType {ADD, DRAIN}
-
     private Timestamp date;
+
     private Container container;
     private OperationType operationType;
     private double waterValue;
     private boolean wasSuccess;
-
     public OperationEvent(Timestamp date, Container container, OperationType operationType, double waterValue, boolean wasSuccess) {
         this.date = date;
         this.container = container;
@@ -63,4 +61,6 @@ public class OperationEvent {
     public int hashCode() {
         return Objects.hash(date, container, operationType, waterValue, wasSuccess);
     }
+
+    public enum OperationType {ADD, DRAIN}
 }
