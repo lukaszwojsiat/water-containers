@@ -1,16 +1,23 @@
 package pl.kurs.watercontainters.domain;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Container {
     private String name;
     private double maxCapacity;
     private double waterLevel;
+    private List<OperationEvent> operationEventsHistory;
+
 
     private Container(String name, double maxCapacity, double waterLevel) {
         this.name = name;
         this.maxCapacity = maxCapacity;
         this.waterLevel = waterLevel;
+        operationEventsHistory = new ArrayList<>();
     }
 
     public static Container create(String name, double maxCapacity){
@@ -28,6 +35,7 @@ public class Container {
             System.out.println("You trying add too much water!");
             success = false;
         }
+        saveEvent(new OperationEvent(Timestamp.from(Instant.now()), this, OperationEvent.OperationType.ADD, value, success));
     }
 
     public void pourWater(Container source, double value) {
@@ -47,7 +55,12 @@ public class Container {
             System.out.println("You trying drain too much water!");
             success = false;
         }
+        saveEvent(new OperationEvent(Timestamp.from(Instant.now()), this, OperationEvent.OperationType.DRAIN, value, success));
 
+    }
+
+    private void saveEvent(OperationEvent operationEvent) {
+        operationEventsHistory.add(operationEvent);
     }
 
     private boolean addingWaterIsPossible(double value) {
@@ -58,6 +71,9 @@ public class Container {
         return waterLevel - value >= 0;
     }
 
+    public List<OperationEvent> getOperationEventsHistory() {
+        return operationEventsHistory;
+    }
 
     public String getName() {
         return name;
